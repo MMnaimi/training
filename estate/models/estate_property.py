@@ -65,7 +65,18 @@ class EstateProperty(models.Model):
         ),
     ]
 
+    # @api.ondelete(at_uninstall=False)
+    # def _unlink_if_state_new_cancel(self):
+    #     if self.state not in ('new', 'cancelled'):
+    #         raise ValidationError('Record can only be deleted in new or cancel states.')
 
+    def unlink(self):
+        for rec in self:
+            if rec.state not in ('new', 'cancelled'):
+                raise ValidationError('Record can only be deleted in new or cancel states.')
+            
+            return super(EstateProperty, self).unlink()
+            
     @api.constrains('selling_price')
     def _check_selling_price(self):
         for record in self:
@@ -177,7 +188,7 @@ class EstatePropertyOffer(models.Model):
     ], copy=False
     )
     partner_id = fields.Many2one('res.partner', required=True)
-    property_id = fields.Many2one('estate.property', required=True)
+    property_id = fields.Many2one('estate.property', required=True, ondelete='cascade')
     validty = fields.Integer()
     date_deadline = fields.Date(compute='_compute_date_deadline')
     property_type_id = fields.Many2one(related='property_id.property_type_id', store=True)
@@ -189,6 +200,17 @@ class EstatePropertyOffer(models.Model):
             'Price must be greater than 0.'
         ),
     ]
+
+    @api.model
+    def create(self, values):
+        estate_property = self.env['estate.property'].browse(values.get('property_id'))
+        estate_property.state = 'offer_received'
+        if values.get('price') <= estate_property.best_price:
+            raise ValidationError(f"The offer must be higher than {estate_property.best_price}")
+        res = super(EstatePropertyOffer, self).create(values)
+        # res.property_id.state = 'offer_received'
+        return res
+
     
 
     @api.depends('validty', 'create_date')
