@@ -115,6 +115,24 @@ class EstatePropertyType(models.Model):
     name = fields.Char(required=True)
     property_ids = fields.One2many('estate.property', 'property_type_id')
     sequence = fields.Integer()
+    offer_ids = fields.One2many('estate.property.offer', 'property_type_id')
+    offer_count = fields.Integer(compute='_compute_offer_count')
+
+    def open_offers(self):
+        for rec in self:
+            return {
+                'name': 'Offers',
+                'type': 'ir.actions.act_window',
+                # 'view_type': 'form,tree',
+                'view_mode': 'tree,form',
+                'res_model': 'estate.property.offer',
+                'domain': [('property_type_id', '=', rec.id)],
+            }
+
+    @api.depends('offer_ids')
+    def _compute_offer_count(self):
+        for rec in self:
+            rec.offer_count = len(rec.offer_ids)
 
     _sql_constraints = [
         (
@@ -150,6 +168,7 @@ class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'Estate Property Offer'
     _order = 'price desc'
+    _rec_name='partner_id'
 
     price = fields.Float()
     status = fields.Selection([
@@ -161,6 +180,7 @@ class EstatePropertyOffer(models.Model):
     property_id = fields.Many2one('estate.property', required=True)
     validty = fields.Integer()
     date_deadline = fields.Date(compute='_compute_date_deadline')
+    property_type_id = fields.Many2one(related='property_id.property_type_id', store=True)
 
     _sql_constraints = [
         (

@@ -1,6 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
+    <!-- Offers -->
+    <record id="open_type_offers_action" model="ir.actions.act_window">
+        <field name="name">Offers</field>
+        <field name="res_model">estate.property.offer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('property_type_id', '=', active_id)]</field>
+    </record>
+
     <record id="estate_property_view_tree" model="ir.ui.view">
         <field name="name">estate.property.view.tree</field>
         <field name="model">estate.property</field>
@@ -64,6 +72,7 @@
                                     <button icon="fa-check text-success" name="action_accept" type="object" attrs="{'invisible': [('status', '=', 'refused')]}"/>
                                     <button  icon="fa-times text-danger" name="action_refuse" type="object" attrs="{'invisible': [('status', '=', 'refused')]}"/>
                                     <field name="status" invisible="1"/>
+                                    <field name="property_type_id" invisible="1"/>
                                 </tree>
                             </field>
                         </page>
@@ -121,6 +130,12 @@
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="open_offers" icon="fa-money" string="Offers">
+                            <field name="offer_count" widget="statinfo" string="Offers"/>
+                        </button>
+                    </div>
                     <group>
                         <field name="name" />
                     </group>
@@ -167,7 +182,6 @@
             </tree>
         </field>
     </record>
-
 
     <menuitem id="estate" name="Estate">
         <menuitem id="advertisement" name="Advertisement">
