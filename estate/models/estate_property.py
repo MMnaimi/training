@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from datetime import date, timedelta
 from odoo.exceptions import UserError, ValidationError
 
+from datetime import date, timedelta
 from random import randint
-
-
-
 
 
 class EstateProperty(models.Model):
     _name = 'estate.property'
     _description = 'Estate Property'
     _order = 'id desc'
-
 
     name = fields.Char(required=True)
     description = fields.Text()
@@ -57,12 +53,7 @@ class EstateProperty(models.Model):
             'expected_price_positive',
             'CHECK(expected_price >= 0)',
             'Expected price must be greater than 0.'
-        ),
-        (
-            'selling_price_positive',
-            'CHECK(selling_price >= 0)',
-            'Selling price must be greater than 0.'
-        ),
+        )
     ]
 
     # @api.ondelete(at_uninstall=False)
@@ -74,14 +65,13 @@ class EstateProperty(models.Model):
         for rec in self:
             if rec.state not in ('new', 'cancelled'):
                 raise ValidationError('Record can only be deleted in new or cancel states.')
-            
             return super(EstateProperty, self).unlink()
-            
+
     @api.constrains('selling_price')
     def _check_selling_price(self):
-        for record in self:
-            if record.selling_price < record.expected_price * 0.9:
-                raise ValidationError('Selling price should be at least 90% expected price.')
+        for rec in self:
+            if rec.selling_price < rec.expected_price * 0.9:
+                raise ValidationError(f'Selling price should be at least 90% expected price.')
             
     @api.depends('living_area', 'garden_area')
     def _compute_total_area(self):
@@ -134,7 +124,6 @@ class EstatePropertyType(models.Model):
             return {
                 'name': 'Offers',
                 'type': 'ir.actions.act_window',
-                # 'view_type': 'form,tree',
                 'view_mode': 'tree,form',
                 'res_model': 'estate.property.offer',
                 'domain': [('property_type_id', '=', rec.id)],
@@ -174,7 +163,6 @@ class EstatePropertyTag(models.Model):
     ]
 
 
-
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'Estate Property Offer'
@@ -208,10 +196,7 @@ class EstatePropertyOffer(models.Model):
         if values.get('price') <= estate_property.best_price:
             raise ValidationError(f"The offer must be higher than {estate_property.best_price}")
         res = super(EstatePropertyOffer, self).create(values)
-        # res.property_id.state = 'offer_received'
         return res
-
-    
 
     @api.depends('validty', 'create_date')
     def _compute_date_deadline(self):
@@ -220,8 +205,12 @@ class EstatePropertyOffer(models.Model):
 
     def action_accept(self):
         for rec in self:
-            rec.property_id.selling_price = rec.price
-            rec.property_id.buyer = rec.partner_id.id
+            rec.property_id.write({
+                'selling_price': rec.price,
+                'buyer': rec.partner_id.id,
+                'state': 'offer_accepted',
+                
+            })
             rec.status = 'accepted'
 
     def action_refuse(self):

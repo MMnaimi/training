@@ -13,15 +13,16 @@
         <field name="name">estate.property.view.tree</field>
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
-            <tree string="">
+            <tree string="" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'">
                 <field name="name" string="Title"/>
                 <field name="property_type_id" />
                 <field name="postcode" string="Post Code"/>
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 <field name="bedrooms" />
                 <field name="living_area" string="Living Area (sqm)"/>
-                <field name="expected_price" />
                 <field name="date_availibility" optional="hide"/>
+                <field name="expected_price" />
+                <field name="state" widget="badge" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'"/>
             </tree>
         </field>
     </record>
@@ -33,7 +34,7 @@
                 <header>
                     <button string="Sold" name="action_sold" type="object" class="oe_highlight" states="new,offer_received,offer_accepted"/>
                     <button string="Cancel" name="action_cancel" type="object" class="oe_highlight" states="new,offer_received,offer_accepted"/>
-                    <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted" />
+                    <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold" />
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -49,7 +50,7 @@
                         <group>
                             <field name="expected_price" />
                             <field name="best_price" />
-                            <field name="selling_price" />
+                            <field name="selling_price" readonly="1" />
                         </group>
                     </group>
                     <notebook>
@@ -71,8 +72,8 @@
                                 <tree editable="bottom" decoration-success = "status == 'accepted'" decoration-danger="status == 'refused'">
                                     <field name="price" />
                                     <field name="partner_id" />
-                                    <button icon="fa-check text-success" name="action_accept" type="object" attrs="{'invisible': [('status', '=', 'refused')]}"/>
-                                    <button  icon="fa-times text-danger" name="action_refuse" type="object" attrs="{'invisible': [('status', '=', 'refused')]}"/>
+                                    <button icon="fa-check text-success" name="action_accept" type="object" attrs="{'invisible': ['|', ('status', '=', 'refused'), ('status', '=', 'accepted')]}"/>
+                                    <button  icon="fa-times text-danger" name="action_refuse" type="object" attrs="{'invisible': ['|', ('status', '=', 'refused'), ('status', '=', 'accepted')]}"/>
                                     <field name="status" invisible="1"/>
                                     <field name="property_type_id" invisible="1"/>
                                 </tree>
@@ -144,7 +145,7 @@
                     <notebook>
                         <page name="properties" string="Properties">
                             <field name="property_ids">
-                                <tree>
+                                <tree create="false">
                                     <field name="name" string="Title" />
                                     <field name="expected_price" />
                                     <field name="state" string="status"/>
