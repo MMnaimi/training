@@ -5,10 +5,13 @@
         <field name="model">estate.property</field>
         <field name="inherit_id" ref="estate.estate_property_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='expected_price']" position="before">
+                <field name="currency_id" />
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button class="oe_stat_button" type="object"
+                <button class="oe_stat_button" type="object" attrs="{'invisible': [('invoice_amount', '=', 0)]}"
                     name="open_invoice" icon="fa-bar" string="Invoice">
-                    <!-- <field name="invoice_amount" widget="statinfo" string="Invoice"/> -->
+                    <field name="invoice_amount" widget="statinfo" string="Invoice"/>
                 </button>
             </xpath>
         </field>

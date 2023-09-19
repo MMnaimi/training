@@ -26,6 +26,7 @@
         'security/ir.model.access.csv',
         'views/estate_property_views.xml',
         'views/users_view.xml',
+        'wizards/accept_reason_view.xml',
     ],
     # only loaded in demonstration mode
 

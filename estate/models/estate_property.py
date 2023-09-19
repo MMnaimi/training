@@ -47,6 +47,7 @@ class EstateProperty(models.Model):
     salesman = fields.Many2one('res.users', default=lambda self: self.env.user)
     total_area = fields.Float(compute='_compute_total_area')
     best_price = fields.Float(compute='_compute_best_price')
+    offer_accept_reason = fields.Text()
 
     _sql_constraints = [
         (
@@ -205,13 +206,15 @@ class EstatePropertyOffer(models.Model):
 
     def action_accept(self):
         for rec in self:
-            rec.property_id.write({
-                'selling_price': rec.price,
-                'buyer': rec.partner_id.id,
-                'state': 'offer_accepted',
-                
-            })
-            rec.status = 'accepted'
+            return {
+                'name': 'Accept Reason',
+                'type': 'ir.actions.act_window',
+                'res_model': 'accept.reason.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'default_property_id': rec.property_id.id, 'default_offer_id': rec.id}
+            }
+
 
     def action_refuse(self):
         for rec in self:

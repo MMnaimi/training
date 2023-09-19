@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="accept_reason_wizard_view_form" model="ir.ui.view">
+        <field name="name">accept.reason.wizard.view.form</field>
+        <field name="model">accept.reason.wizard</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="reason" />
+                        </group>
+                        <group>
+                            <field name="date" />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Accept" class="btn btn-primary" type="object" name="action_accept" data-hotkey="q" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

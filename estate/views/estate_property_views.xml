@@ -86,6 +86,11 @@
                                 <field name="buyer" />
                             </group>
                         </page>
+                        <page name="offer_accept_reason" string="Accept Reason" attrs="{'invisible': [('offer_accept_reason', '=', False)]}">
+                            <group>
+                                <field name="offer_accept_reason" readonly="1"/>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
