@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="account_move_inherit_estate" model="ir.ui.view">
+        <field name="name">account.move.view.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object"
+                    name="open_estate_property" icon="fa-bar" string="Estate Property">
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

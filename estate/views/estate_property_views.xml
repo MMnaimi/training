@@ -72,6 +72,7 @@
                             <field name="offer_ids">
                                 <tree editable="bottom" decoration-success = "status == 'accepted'" decoration-danger="status == 'refused'">
                                     <field name="price" />
+                                    <field name="currency_id" invisible="1" />
                                     <field name="partner_id" />
                                     <button icon="fa-check text-success" name="action_accept" type="object" attrs="{'invisible': ['|', ('status', '=', 'refused'), ('status', '=', 'accepted')]}"/>
                                     <button  icon="fa-times text-danger" name="action_refuse" type="object" attrs="{'invisible': ['|', ('status', '=', 'refused'), ('status', '=', 'accepted')]}"/>
@@ -89,6 +90,7 @@
                         <page name="offer_accept_reason" string="Accept Reason" attrs="{'invisible': [('offer_accept_reason', '=', False)]}">
                             <group>
                                 <field name="offer_accept_reason" readonly="1"/>
+                                <field name="offer_accept_date" readonly="1"/>
                             </group>
                         </page>
                     </notebook>

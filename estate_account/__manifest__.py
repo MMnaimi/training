@@ -26,6 +26,9 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/estate_property_view.xml',
+        'views/account_move_inherit_view.xml',
+
+        
     ],
     # only loaded in demonstration mode
 }

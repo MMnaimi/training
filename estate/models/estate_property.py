@@ -16,8 +16,8 @@ class EstateProperty(models.Model):
     description = fields.Text()
     postcode = fields.Char()
     date_availibility = fields.Date(copy=False, default=lambda self: date.today() + timedelta(days=90))
-    expected_price = fields.Float(required=True)
-    selling_price = fields.Float( copy=False)
+    expected_price = fields.Monetary(required=True)
+    selling_price = fields.Monetary( copy=False)
     bedrooms = fields.Integer(default=2)
     living_area = fields.Integer()
     facades = fields.Integer()
@@ -46,8 +46,10 @@ class EstateProperty(models.Model):
     buyer = fields.Many2one('res.partner')
     salesman = fields.Many2one('res.users', default=lambda self: self.env.user)
     total_area = fields.Float(compute='_compute_total_area')
-    best_price = fields.Float(compute='_compute_best_price')
+    best_price = fields.Monetary(compute='_compute_best_price')
     offer_accept_reason = fields.Text()
+    currency_id = fields.Many2one('res.currency')
+    offer_accept_date = fields.Date()
 
     _sql_constraints = [
         (
@@ -170,7 +172,7 @@ class EstatePropertyOffer(models.Model):
     _order = 'price desc'
     _rec_name='partner_id'
 
-    price = fields.Float()
+    price = fields.Monetary()
     status = fields.Selection([
         ('accepted', 'Accepted'),
         ('refused', 'Refused'),
@@ -181,7 +183,7 @@ class EstatePropertyOffer(models.Model):
     validty = fields.Integer()
     date_deadline = fields.Date(compute='_compute_date_deadline')
     property_type_id = fields.Many2one(related='property_id.property_type_id', store=True)
-
+    currency_id = fields.Many2one(related='property_id.currency_id', store=True)
     _sql_constraints = [
         (
             'price_positive',

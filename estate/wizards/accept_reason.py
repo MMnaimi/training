@@ -20,6 +20,6 @@ class AcceptReaonWizard(models.TransientModel):
                 'buyer': rec.offer_id.partner_id.id,
                 'state': 'offer_accepted',
                 'offer_accept_reason': rec.reason,
-                
+                'offer_accept_date': rec.date,
             })
             rec.offer_id.status = 'accepted'
