@@ -12,6 +12,8 @@ class EstateProperty(models.Model):
     _description = 'Estate Property'
     _order = 'id desc'
 
+
+    ref = fields.Char(readonly=True, default='New')
     name = fields.Char(required=True)
     description = fields.Text()
     postcode = fields.Char()
@@ -58,6 +60,15 @@ class EstateProperty(models.Model):
             'Expected price must be greater than 0.'
         )
     ]
+
+
+
+
+    @api.model
+    def create(self, values):
+        values['ref'] = self.env['ir.sequence'].next_by_code('generate.estate.property.sequence')
+        return super(EstateProperty, self).create(values)
+
 
     # @api.ondelete(at_uninstall=False)
     # def _unlink_if_state_new_cancel(self):
