@@ -12,6 +12,7 @@ class EstateProperty(models.Model):
     _description = 'Estate Property'
     _order = 'id desc'
 
+    ref = fields.Char(readonly=True, default='New')
     name = fields.Char(required=True)
     description = fields.Text()
     postcode = fields.Char()
@@ -48,6 +49,7 @@ class EstateProperty(models.Model):
     total_area = fields.Float(compute='_compute_total_area')
     best_price = fields.Float(compute='_compute_best_price')
     offer_accept_reason = fields.Text()
+    description2 = fields.Html()
 
     _sql_constraints = [
         (
@@ -61,6 +63,12 @@ class EstateProperty(models.Model):
     # def _unlink_if_state_new_cancel(self):
     #     if self.state not in ('new', 'cancelled'):
     #         raise ValidationError('Record can only be deleted in new or cancel states.')
+
+
+    @api.model
+    def create(self, values):
+        values['ref'] = self.env['ir.sequence'].next_by_code('generate.estate.property.sequence')
+        return super(EstateProperty, self).create(values)
 
     def unlink(self):
         for rec in self:

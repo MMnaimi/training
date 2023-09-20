@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, Command
+from odoo.exceptions import UserError, ValidationError
+
+
 
 class EstateProperty(models.Model):
     _inherit = 'estate.property'
@@ -8,6 +11,12 @@ class EstateProperty(models.Model):
     invoice_id = fields.Many2one('account.move')
     invoice_amount = fields.Monetary(compute='_compute_invoice_amount')
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
+
+
+    def copy(self, default=None):
+        if self.state == 'sold':
+            raise ValidationError('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        return super().copy(default)
 
     @api.depends('invoice_id')
     def _compute_invoice_amount(self):

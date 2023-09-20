@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'data/sequence.xml',
         'views/estate_property_views.xml',
         'views/users_view.xml',
         'wizards/accept_reason_view.xml',
