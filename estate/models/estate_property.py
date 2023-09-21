@@ -127,9 +127,11 @@ class EstatePropertyType(models.Model):
     sequence = fields.Integer()
     offer_ids = fields.One2many('estate.property.offer', 'property_type_id')
     offer_count = fields.Integer(compute='_compute_offer_count')
+    code = fields.Char()
 
     def open_offers(self):
         for rec in self:
+            print('>>>>>>>>>>>>>>>>>>>', self.env['estate.property'].search_count(['|', ('state', '=', 'offer_received'), ('bedrooms', '=', 5)]))
             return {
                 'name': 'Offers',
                 'type': 'ir.actions.act_window',
@@ -137,6 +139,12 @@ class EstatePropertyType(models.Model):
                 'res_model': 'estate.property.offer',
                 'domain': [('property_type_id', '=', rec.id)],
             }
+        
+    def name_get(self):
+        result = []
+        for rec in self:
+            result.append((rec.id, f'{rec.name}-{rec.code}'))
+        return result
 
     @api.depends('offer_ids')
     def _compute_offer_count(self):
@@ -150,6 +158,16 @@ class EstatePropertyType(models.Model):
             'Property type name already exist'
         ),
     ]
+
+    @api.model
+    def name_create(self, name):
+        print('>>>>>>>>>>>>>>>>>>>>>>', name)
+        return self.create({'name': f'{name} adfasdf'}).name_get()[0]
+    
+    def write(self, vals):
+
+        res = super(EstatePropertyType, self).write(vals)
+        return res
 
 
 class EstatePropertyTag(models.Model):
