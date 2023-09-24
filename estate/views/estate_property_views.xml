@@ -234,10 +234,9 @@
         <menuitem id="advertisement" name="Advertisement">
             <menuitem id="properties" name="Properies" action="estate_property_action"/>
         </menuitem>
-        <menuitem id="settings" name="Settings">
+        <menuitem id="settings" name="Settings" groups="estate.group_estate_admin">
             <menuitem id="estate_property_type_menu" name="Property type" action="estate_property_type_action" />
             <menuitem id="estate_property_tag_menu" name="Property Tags" action="estate_property_tag_action" />
-
         </menuitem>
     </menuitem>    
 

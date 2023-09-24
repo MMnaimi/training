@@ -23,6 +23,7 @@
 
     # always loaded
     'data': [
+        'security/security.xml',    
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'views/estate_property_views.xml',

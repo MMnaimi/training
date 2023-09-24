@@ -5,6 +5,7 @@ from odoo.exceptions import UserError, ValidationError
 
 from datetime import date, timedelta
 from random import randint
+from odoo.osv import expression
 
 
 class EstateProperty(models.Model):
@@ -131,7 +132,10 @@ class EstatePropertyType(models.Model):
 
     def open_offers(self):
         for rec in self:
-            print('>>>>>>>>>>>>>>>>>>>', self.env['estate.property'].search_count(['|', ('state', '=', 'offer_received'), ('bedrooms', '=', 5)]))
+            print('>>>>>>>>>>>>>>>>>>>', self.env['estate.property'].search([]).mapped('state'))
+            # rec.env.cr.execute("Select name,state from estate_property where state = 'new'")
+            # result  = self.env.cr.dictfetchall()
+            # print('>>>>>>>>>>>>>>>>>>>>>>>', result)
             return {
                 'name': 'Offers',
                 'type': 'ir.actions.act_window',
@@ -145,6 +149,12 @@ class EstatePropertyType(models.Model):
         for rec in self:
             result.append((rec.id, f'{rec.name}-{rec.code}'))
         return result
+    
+    @api.model
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = args or []
+        domain = ['|', ('name', operator, name), ('code', operator, name)]
+        return self._search(expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid)
 
     @api.depends('offer_ids')
     def _compute_offer_count(self):
@@ -161,11 +171,9 @@ class EstatePropertyType(models.Model):
 
     @api.model
     def name_create(self, name):
-        print('>>>>>>>>>>>>>>>>>>>>>>', name)
         return self.create({'name': f'{name} adfasdf'}).name_get()[0]
     
     def write(self, vals):
-
         res = super(EstatePropertyType, self).write(vals)
         return res
 
